@@ -1,12 +1,12 @@
 defmodule Tictactoe.State do
-  alias Tictactoe.{Square, State}
+  alias Tictactoe.{Board, State}
   @players [:x, :o]
 
   defstruct game_id: nil,
             status: :initial,
             turn: nil,
             winner: false,
-            board: Square.new_board(),
+            board: Board.new_board(),
             ui: nil
 
   def new(game_id), do: {:ok, %State{game_id: game_id}}

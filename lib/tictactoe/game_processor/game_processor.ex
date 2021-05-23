@@ -5,6 +5,7 @@ defmodule Tictactoe.GameProcessor do
   alias Tictactoe.GameSupervisor, as: GameSupervisor
   alias Tictactoe.State, as: State
   alias Tictactoe.Store, as: GameStore
+  alias Tictactoe.Board, as: Board
 
   def create_game() do
     with {:ok, game_id} <- GameIdGenerator.new_game_id(),
@@ -35,7 +36,11 @@ defmodule Tictactoe.GameProcessor do
     {:reply, game_state.game_id, game_state}
   end
 
-  def via_tuple(name) do
+  def build_board_response(board) do
+    Board.build_board_response(board)
+  end
+
+  defp via_tuple(name) do
     {:via, Registry, {Tictactoe.GameRegistry, name}}
   end
 
