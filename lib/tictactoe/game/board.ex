@@ -25,4 +25,19 @@ defmodule Tictactoe.Board do
     for {%{col: col, row: row}  , player} <- board, into: %{}, do: {Jason.encode!(%{col: col,row: row}), player}
   end
 
+  def get_board_col(board, col) do
+    for {%{col: c, row: _}, v} <- board, col == c, do: v
+  end
+
+  def get_board_rows(board, row) do
+    for {%{col: _, row: r}, v} <- board, row == r, do: v
+  end
+
+  def get_board_diagonals(board) do
+    [
+      for({%{col: c, row: r}, v} <- board, c == r, do: v),
+      for({%{col: c, row: r}, v} <- board, c + r == 4, do: v)
+    ]
+  end
+
 end

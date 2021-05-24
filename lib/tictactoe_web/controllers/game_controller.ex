@@ -5,8 +5,6 @@ defmodule TictactoeWeb.GameController do
   action_fallback TictactoeWeb.FallbackController
 
 
-
-
   def create_game(conn, _params) do
     with {:ok, game_id} <- GameProcessor.create_game(),
          do: json(conn, %{game_id: game_id})

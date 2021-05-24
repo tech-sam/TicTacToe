@@ -3,7 +3,7 @@ defmodule Tictactoe.GameProcessor do
 
   alias Tictactoe.GameProcessor.GameIdGenerator, as: GameIdGenerator
   alias Tictactoe.{GameSupervisor,State,Store,Board,GameUtils}
-
+  @board_range 1..3
 
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, %{}, name: via_tuple(opts.name))
@@ -32,17 +32,22 @@ defmodule Tictactoe.GameProcessor do
   @impl true
   def handle_call({:move, %State{status: :initial} = game_state,game_params}, _from, state) do
      with {:ok, player} <-  GameUtils.get_player(game_params),
-    {:ok, game_state} <- State.move(game_state, {:choose_p1, player}),
-    {:ok,game_state} <- handle(game_state)
-    do
-      {:reply, {:ok, game_state.game_id}, game_state}
-    else
-      {:error,:invalid_player} ->
-        {:reply, {:error, :invalid_player},game_state}
-        err ->
-          {:error, err}
-    end
+          {:ok, game_state} <- State.move(game_state, {:choose_p1, player}),
+    do: handle_call(game_state,game_params),
+    else: (error -> error)
+  end
 
+  @impl true
+  def handle_call({:move, %State{status: :playing} = game_state,game_params}, _from, state) do
+    handle_call(game_state,game_params)
+  end
+
+  def handle_call(game_state,game_params) do
+    case handle(game_state,game_params) do
+      {:ok,game_state} -> {:reply, {:ok, GameUtils.build_response(game_state)}, game_state}
+      {:error,:invalid_player} -> {:reply, {:error, :invalid_player},game_state}
+      _ -> {:error, :invalid_move}
+    end
   end
 
   def create_game() do
@@ -63,11 +68,18 @@ defmodule Tictactoe.GameProcessor do
     else: (error -> error)
   end
 
-  def handle(%State{status: :playing} = game) do
-    player = game.turn
-    # get the col and row from here
+  def handle(%State{status: :playing} = game,game_params) do
 
-    {:ok,game}
+    player = game.turn
+     with {col, row} <- GameUtils.get_cell_coordinates(game_params),
+     {:ok, board} <- play_at(game.board, col, row, game.turn),
+     {:ok, game} <- State.move(%{game | board: board}, {:play, game.turn}),
+     won? <- win_check(board, player),
+     {:ok, game} <- State.move(game, {:check_for_winner, won?}),
+     over? <- game_over?(game),
+     {:ok, game} <- State.move(game, {:game_over?, over?}),
+     do: {:ok,game},
+     else: (error -> error)
   end
 
 
@@ -79,6 +91,42 @@ defmodule Tictactoe.GameProcessor do
     end
   end
 
+
+  def play_at(board, col, row, player) do
+    with {:ok, valid_player} <- check_player(player),
+         {:ok, square} <- Board.new(col, row),
+         {:ok, new_board} <- place_piece(board, square, valid_player),
+         do: {:ok, new_board}
+  end
+
+  def place_piece(board, place, player) do
+    case board[place] do
+      nil -> {:error, :invalid_location}
+      :x -> {:error, :occupied}
+      :o -> {:error, :occupied}
+      :empty -> {:ok, %{board | place => player}}
+    end
+  end
+
+  def win_check(board, player) do
+    cols = Enum.map(@board_range, &Board.get_board_col(board, &1))
+    rows = Enum.map(@board_range, &Board.get_board_rows(board, &1))
+    diagonals = Board.get_board_diagonals(board)
+    win? = Enum.any?(cols ++ rows ++ diagonals, &won_line(&1, player))
+    if win?, do: player, else: false
+  end
+
+  def game_over?(game) do
+    board_full = Enum.all?(game.board, fn {_, v} -> v != :empty end)
+
+    if board_full or game.winner do
+      :game_over
+    else
+      :not_over
+    end
+  end
+
+  def won_line(line, player), do: Enum.all?(line, &(player == &1))
 
   def build_board_response(board) do
     Board.build_board_response(board)
