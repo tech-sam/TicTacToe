@@ -19,4 +19,12 @@ defmodule Tictactoe.GameUtils do
     }
   end
 
+  def game_over_msg(game) do
+    case game.winner do
+      :tie -> "Game is tie, time to start something new !!"
+      _ ->  "Player #{Atom.to_string(game.winner)} is winner of the game !!"
+    end
+
+  end
+
 end

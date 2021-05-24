@@ -10,6 +10,7 @@ defmodule Tictactoe.State do
             status: :initial,
             turn: nil,
             winner: false,
+            validate_player_turn: true,
             board: Board.new_board(),
             ui: nil
 
@@ -19,7 +20,7 @@ defmodule Tictactoe.State do
   def move(%State{status: :initial} = state, {:choose_p1, player}) do
     case GameProcessor.check_player(player) do
       {:ok, valid_player} ->
-        {:ok, %State{state | status: :playing, turn: valid_player}}
+        {:ok, %State{state | status: :playing, turn: valid_player, validate_player_turn: false}}
       _ ->
         {:error, :invalid_player}
     end
@@ -30,7 +31,7 @@ defmodule Tictactoe.State do
   end
 
   def move(%State{status: :playing, turn: player} = state, {:play, player}) do
-    {:ok, %State{state | turn: other_player(player)}}
+    {:ok, %State{state | turn: other_player(player), validate_player_turn: true}}
   end
 
   def move(%State{status: :playing} = state, {:check_for_winner, winner}) do

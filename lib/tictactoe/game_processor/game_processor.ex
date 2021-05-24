@@ -2,7 +2,7 @@ defmodule Tictactoe.GameProcessor do
   use GenServer
 
   alias Tictactoe.GameProcessor.GameIdGenerator, as: GameIdGenerator
-  alias Tictactoe.{GameSupervisor,State,Store,Board,GameUtils}
+  alias Tictactoe.{GameSupervisor, State, Store, Board, GameUtils}
   @board_range 1..3
 
   def start_link(opts \\ []) do
@@ -14,7 +14,7 @@ defmodule Tictactoe.GameProcessor do
   end
 
   def move(server, state, game_params) do
-    GenServer.call(server, {:move, state,game_params})
+    GenServer.call(server, {:move, state, game_params})
   end
 
   @impl true
@@ -23,29 +23,41 @@ defmodule Tictactoe.GameProcessor do
   end
 
   @impl true
-  def handle_call({:start, %State{status: :initial} = game_state}, _from, state) do
-     Store.new()
+  def handle_call({:start, %State{status: :initial} = game_state}, _from, _state) do
+    Store.new()
     |> Store.store_game(game_state)
+
     {:reply, {:ok, game_state.game_id}, game_state}
   end
 
   @impl true
-  def handle_call({:move, %State{status: :initial} = game_state,game_params}, _from, state) do
-     with {:ok, player} <-  GameUtils.get_player(game_params),
-          {:ok, game_state} <- State.move(game_state, {:choose_p1, player}),
-    do: handle_call(game_state,game_params),
-    else: (error -> error)
+  def handle_call({:move, %State{status: :initial} = game_state, game_params}, _from, _state) do
+    with {:ok, player} <- GameUtils.get_player(game_params),
+         {:ok, game_state} <- State.move(game_state, {:choose_p1, player}) do
+      handle_call(game_state, game_params)
+    else
+      {:error, :invalid_player} -> {:reply, {:error, :invalid_player}, game_state}
+    end
   end
 
   @impl true
-  def handle_call({:move, %State{status: :playing} = game_state,game_params}, _from, state) do
-    handle_call(game_state,game_params)
+  def handle_call({:move, %State{status: :playing} = game_state, game_params}, _from, _state) do
+    handle_call(game_state, game_params)
   end
 
-  def handle_call(game_state,game_params) do
-    case handle(game_state,game_params) do
-      {:ok,game_state} -> {:reply, {:ok, GameUtils.build_response(game_state)}, game_state}
-      {:error,:invalid_player} -> {:reply, {:error, :invalid_player},game_state}
+  @impl true
+  def handle_call({:move, %State{status: :game_over} = game_state, _game_params}, _from, _state) do
+    {:reply, {:ok, GameUtils.game_over_msg(game_state)}, game_state}
+  end
+
+  def handle_call(game_state, game_params) do
+    case handle(game_state, game_params) do
+      {:ok, game_state} -> {:reply, {:ok, GameUtils.build_response(game_state)}, game_state}
+      {:game_over, game_state} -> {:reply, {:ok, GameUtils.game_over_msg(game_state)}, game_state}
+      {:error, :invalid_player} -> {:reply, {:error, :invalid_player}, game_state}
+      {:error, :invalid_square} -> {:reply, {:error, :invalid_square}, game_state}
+      {:error, :occupied} -> {:reply, {:error, :occupied}, game_state}
+      {:error, :invalid_player_turn} -> {:reply, {:error, :invalid_player_turn}, game_state}
       _ -> {:error, :invalid_move}
     end
   end
@@ -54,43 +66,56 @@ defmodule Tictactoe.GameProcessor do
     with {:ok, game_id} <- GameIdGenerator.new_game_id(),
          {:ok, _pid} <- GameSupervisor.supervise_game_processor(game_id),
          {:ok, state} <- State.new(game_id),
-          do: start(via_tuple(game_id), state),
-
+         do: start(via_tuple(game_id), state),
          else: (error -> error)
   end
 
-
   def move_game(game_params) do
-
-    with game_process <- via_tuple(game_params["game_id"]),
-        state <- :sys.get_state(game_process),
-    do: move(game_process,state,game_params),
-    else: (error -> error)
+    try do
+      with game_process <- via_tuple(game_params["game_id"]),
+           state <- :sys.get_state(game_process),
+           do: move(game_process, state, game_params)
+    catch
+      :exit, {:noproc, _} -> {:error, :invalid_process}
+    end
   end
 
-  def handle(%State{status: :playing} = game,game_params) do
+  def handle(%State{status: :playing} = game, game_params) do
+    with {col, row} <- GameUtils.get_cell_coordinates(game_params),
+         {:ok, player} <- validate_player_turn(game, game_params),
+         {:ok, board} <- play_at(game.board, col, row, game.turn),
+         {:ok, game} <- State.move(%{game | board: board}, {:play, game.turn}),
+         won? <- win_check(board, player),
+         {:ok, game} <- State.move(game, {:check_for_winner, won?}),
+         over? <- game_over?(game),
+         {:ok, game} <- State.move(game, {:game_over?, over?})
+         do
+          case game do
+            %State{status: :game_over} -> {:game_over, game}
+            _ -> {:ok, game}
+          end
 
-    player = game.turn
-     with {col, row} <- GameUtils.get_cell_coordinates(game_params),
-     {:ok, board} <- play_at(game.board, col, row, game.turn),
-     {:ok, game} <- State.move(%{game | board: board}, {:play, game.turn}),
-     won? <- win_check(board, player),
-     {:ok, game} <- State.move(game, {:check_for_winner, won?}),
-     over? <- game_over?(game),
-     {:ok, game} <- State.move(game, {:game_over?, over?}),
-     do: {:ok,game},
-     else: (error -> error)
+         end
+
+         # here handle a win event
   end
-
 
   def check_player(player) do
     case player do
       :x -> {:ok, player}
       :o -> {:ok, player}
-      _ -> {:error,:invalid_player}
+      _ -> {:error, :invalid_player}
     end
   end
 
+  def validate_player_turn(game, params) do
+    current_player = String.to_atom(params["player"])
+
+    case game.validate_player_turn && current_player != game.turn do
+      true -> {:error, :invalid_player_turn}
+      false -> {:ok, game.turn}
+    end
+  end
 
   def play_at(board, col, row, player) do
     with {:ok, valid_player} <- check_player(player),
@@ -128,6 +153,8 @@ defmodule Tictactoe.GameProcessor do
 
   def won_line(line, player), do: Enum.all?(line, &(player == &1))
 
+
+
   def build_board_response(board) do
     Board.build_board_response(board)
   end
@@ -135,5 +162,4 @@ defmodule Tictactoe.GameProcessor do
   defp via_tuple(name) do
     {:via, Registry, {Tictactoe.GameRegistry, name}}
   end
-
 end
