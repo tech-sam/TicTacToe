@@ -85,7 +85,13 @@ You need to provide the specific parameters to move API as below in the request 
 
 #### Following checks will be validated by the game processor for the right move.
 
+`lib/tictactoe_web/controllers/fallback_controller.ex` contains all the errors thrown by the game process in case of an invalid move
 
+* `game-Id`: A valid state game-id required for a move
+* `player`: player passed must be X or O
+* `cell coordinates`: row and column range should be 1..3 
+* `cell occupied`: row and column should be empty for a proper move
+* `player-turn`: The same player is not allowed in 2 consecutive moves 
 
 
 
