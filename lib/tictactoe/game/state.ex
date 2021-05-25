@@ -15,6 +15,7 @@ defmodule Tictactoe.State do
             ui: nil
 
   def new(game_id), do: {:ok, %State{game_id: game_id}}
+
   def new(ui), do: {:ok, %State{ui: ui}}
 
   def move(%State{status: :initial} = state, {:choose_p1, player}) do
@@ -61,7 +62,7 @@ defmodule Tictactoe.State do
   end
 
 
-  defp other_player(player) do
+  def other_player(player) do
     case player do
       :x -> :o
       :o -> :x
