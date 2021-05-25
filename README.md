@@ -156,7 +156,7 @@ We can’t name a process with a string; we need to use a [Registry](https://hex
 
 
 
-## Resources Followed for learning Elixir
+## Resources followed for assignment and Elixir learning
 
   * Elixir in Action: https://www.manning.com/books/elixir-in-action-second-edition
   * Alchemist Camp: https://www.youtube.com/channel/UCp5Nix6mJCoLkH_GqcRRp1A
