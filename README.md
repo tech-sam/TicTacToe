@@ -3,8 +3,12 @@
 
 # Tictactoe
 
-This is an Elixir Phoenix backend API application that provides rest endpoints to play a TicTacToe board game.
-API's designed in such a way that any frontend web or mobile applications can consume them.
+Welcome to the TicTacToe Game Processor, an Elixir Phoenix API that manages a TicTacToe game, allowing any type of client and providing a common interface for them to play a game.
+
+## Main Technology stack
+
+*  [Elixir](https://elixir-lang.org/)
+*  [Phoenix](https://www.phoenixframework.org/)
 
 ## Deployment
 
@@ -16,21 +20,25 @@ See [Dyno Sleeping](https://devcenter.heroku.com/articles/free-dyno-hours#dyno-s
 ### App URL
 https://tictac9.herokuapp.com
 
+## Getting up and running:
 
+#### To start application as a local Phoenix server:
 
-
-
-
-In-memory state such as those in Agents, GenServers, and ETS will be lost every 24 hours.
-
-
-
-To start your Phoenix server:
-
+  * Install Elixir from the [Elixir downloads page](https://elixir-lang.org/install.html).
   * Install dependencies with `mix deps.get`
   * Start Phoenix endpoint with `mix phx.server`
+  * The game processor should be accessible now in `localhost:4000`.
+  * Currently test cases are broken due to ecto dependecies 😑 , `mix test` and  `mix acceptance` commands will not work
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+#### To start application using Docker:
+
+* Make sure Docker Deamon is up and running by running `docker run hello-world` or `docker info`
+* Navigate to the app root directory
+* build the image by running `docker build -t tictac .`  don't forget to add a dot 
+* `docker run -p 4000:4000 tictac`
+* The game processor should be accessible now in `localhost:4000`.
+
+
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 
