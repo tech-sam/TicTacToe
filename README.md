@@ -85,7 +85,7 @@ You need to provide the specific parameters to move API as below in the request 
 
 #### Following checks will be validated by the game processor for the right move.
 
-`lib/tictactoe_web/controllers/fallback_controller.ex` contains all the errors thrown by the game process in case of an invalid move
+`lib/tictactoe_web/controllers/fallback_controller.ex` contains all the errors thrown by the game processor in case of an invalid move
 
 * `game-Id`: A valid state game-id required for a move
 * `player`: player passed must be X or O
@@ -93,6 +93,31 @@ You need to provide the specific parameters to move API as below in the request 
 * `cell occupied`: row and column should be empty for a proper move
 * `player-turn`: The same player is not allowed in 2 consecutive moves 
 
+A valid move response will contain the response.
+```
+{
+  "board": {
+    "{\"col\":1,\"row\":1}": "empty",
+    "{\"col\":1,\"row\":2}": "empty",
+    "{\"col\":1,\"row\":3}": "empty",
+    "{\"col\":2,\"row\":1}": "empty",
+    "{\"col\":2,\"row\":2}": "empty",
+    "{\"col\":2,\"row\":3}": "o",
+    "{\"col\":3,\"row\":1}": "empty",
+    "{\"col\":3,\"row\":2}": "empty",
+    "{\"col\":3,\"row\":3}": "empty"
+  },
+  "game_id": "1266eec6-8f95-4c3b-9473-46e3a41e955e",
+  "player": "x",
+  "winner": false
+}
+```
+* The current board after the move.
+* The player that performed the move as a value of cell coordinate value.
+* The current game Id.
+* Next player turn.
+
+> If a move encounter a winning or tie, an appropriate message would be displayed to encourage the players 🎉 
 
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
