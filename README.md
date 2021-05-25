@@ -144,23 +144,24 @@ We can’t name a process with a string; we need to use a [Registry](https://hex
 ![App diagram](https://contattafiles.s3.us-west-1.amazonaws.com/tnt35933/y1rZc5KimgiBVvd/unchain-tictac.jpg "App architecture")
 
 
-
-<!-- Further improvements:
-
-This is our MVP version of the GameEngine. We wanted to follow Start small and Fail fast principles so we can get your feedback earlier and make changes that makes sense for you as the user of the app.
-
-In spite of that we have considered:
-
-    Improve managing of error in the application and edge cases. So far we have pretty much cover the happy path and some simple edge cases.
-    Having concurrent games. It'd be great if this Engine could manage several games happening at the same time. Imagine even a computer player able to play against several human players. -->
+### Further improvements & TODO:
+* Test cases for sure 😔
+* A frontend client in Angular,React or Vue
+* Pub Sub design for real time game state update using web sockets
+* Phoenix live view dashboard 
+* Further code optimization and moudularization
+* Detailed module and function documentation
 
 
 
 
-<!-- resources which I have followed for learning elixir sasa juric book , stephan grider , elixir school and from evernote -->
 
-## Learn more
+## Resources Followed for learning Elixir
 
+  * Elixir in Action: https://www.manning.com/books/elixir-in-action-second-edition
+  * Alchemist Camp: https://www.youtube.com/channel/UCp5Nix6mJCoLkH_GqcRRp1A
+  * Elixir School: https://elixirschool.com/
+  * jessejanderson: https://gist.github.com/jessejanderson/26ef3cf17017e38af7e76bd2dcc6cfb0
   * Official website: https://www.phoenixframework.org/
   * Guides: https://hexdocs.pm/phoenix/overview.html
   * Docs: https://hexdocs.pm/phoenix
