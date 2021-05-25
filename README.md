@@ -20,6 +20,10 @@ See [Dyno Sleeping](https://devcenter.heroku.com/articles/free-dyno-hours#dyno-s
 ### App URL
 https://tictac9.herokuapp.com
 
+### Swagger API documenation URL
+
+https://tictac9.herokuapp.com/api/v1/swagger
+
 ## Getting up and running:
 
 #### To start application as a local Phoenix server:
@@ -34,6 +38,7 @@ https://tictac9.herokuapp.com
 
 * Make sure Docker Deamon is up and running by verify either of the two commands: `docker run hello-world` or `docker info`
 * Navigate to the app root directory
+* To run local docker image ,unfortunately `prod.secret.exs` require commenting line no 29 and uncomment line 28 to get the default port 😞 ( Due to heroku port accessing, working on finding a solution for this)
 * build the image by running `docker build -t tictac .`  don't forget to add a dot 
 * `docker run -p 4000:4000 tictac`
 * The game processor should be accessible now in `localhost:4000`.

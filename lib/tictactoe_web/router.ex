@@ -16,6 +16,26 @@ defmodule TictactoeWeb.Router do
 
   end
 
+  scope "/api/v1/swagger" do
+    forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :tictactoe, swagger_file: "swagger.json"
+  end
+
+  def swagger_info do
+    %{
+      info: %{
+        version: "1.0",
+        title: "TicTacToe GameProcessor"
+      },
+      basePath: "/api/v1/game",
+      description: "API Documentation for TicTacToe v1",
+      termsOfService: "Assignment for Unchain",
+      contact: %{
+        name: "Sumit",
+        email: "sumit.s7325@gmail.com"
+      }
+    }
+  end
+
   # Enables LiveDashboard only for development
   #
   # If you want to use the LiveDashboard in production, you should put
