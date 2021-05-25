@@ -32,13 +32,20 @@ https://tictac9.herokuapp.com
 
 #### To start application using Docker:
 
-* Make sure Docker Deamon is up and running by running `docker run hello-world` or `docker info`
+* Make sure Docker Deamon is up and running by verify with one of the commands `docker run hello-world` or `docker info`
 * Navigate to the app root directory
 * build the image by running `docker build -t tictac .`  don't forget to add a dot 
 * `docker run -p 4000:4000 tictac`
 * The game processor should be accessible now in `localhost:4000`.
 
+## How to use the Game Processor
 
+### Start a game
+
+Game Processor provides an endpoint to start a game. You need to do a POST request to the following endpoint:
+```
+http://localhost:4000/api/v1/game/move
+```
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 
