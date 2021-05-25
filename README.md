@@ -32,7 +32,7 @@ https://tictac9.herokuapp.com/api/v1/swagger
   * Install dependencies with `mix deps.get`
   * Start Phoenix endpoint with `mix phx.server`
   * The game processor should be accessible now in `localhost:4000`.
-  * Currently test cases are broken due to ecto dependecies 😑. `mix test` and  `mix acceptance` commands will not work
+ 
 
 #### To start the application using Docker:
 
