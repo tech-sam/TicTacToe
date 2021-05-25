@@ -122,7 +122,38 @@ A valid move response will contain the response.
 
 ![game move api](https://contattafiles.s3.us-west-1.amazonaws.com/tnt35933/j88dMKfpDTLYc6A/tictactoe-1621936789185.gif "Game move API")
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+### Flow & Design
+
+To ensure an error occurred in a game would be handled appropriately and not prevent the rest of the running games, we wanted something fault-tolerant. 
+
+ We wanted a tool that makes it easy to track the state of a game. By leveraging [Dynamic Supervisors](https://hexdocs.pm/elixir/1.12/DynamicSupervisor.html) and [GenServers](https://hexdocs.pm/elixir/GenServer.html), we can concurrently maintain lots, and lots of games, having an in-memory game state, gracefully handle any errors that might occur for a given game deployment and track each game process.
+
+### App glossary
+
+`GameSupervisor` :  A DynamicSupervisor which starts with no children. Children GameProcessors are started on demand. GameSupervisor allows players to start games, and it also automatically restarts them when a game process crashes. 
+
+`GameProcessor` : Its a GenServer to keep each game’s state, With our GenServer callbacks in place, we can spawn a process that keeps a game’s state.
+
+`GameRegistry` : 
+We can’t name a process with a string; we need to use a [Registry](https://hexdocs.pm/elixir/master/Registry.html) to link string names to game PID's. Elixir’s GenServer implementation has a built-in way of referring to processes in a registry through it’s :via-tuples
+
+![App diagram](https://contattafiles.s3.us-west-1.amazonaws.com/tnt35933/y1rZc5KimgiBVvd/unchain-tictac.jpg "App architecture")
+
+
+
+<!-- Further improvements:
+
+This is our MVP version of the GameEngine. We wanted to follow Start small and Fail fast principles so we can get your feedback earlier and make changes that makes sense for you as the user of the app.
+
+In spite of that we have considered:
+
+    Improve managing of error in the application and edge cases. So far we have pretty much cover the happy path and some simple edge cases.
+    Having concurrent games. It'd be great if this Engine could manage several games happening at the same time. Imagine even a computer player able to play against several human players. -->
+
+
+
+
+<!-- resources which I have followed for learning elixir sasa juric book , stephan grider , elixir school and from evernote -->
 
 ## Learn more
 
