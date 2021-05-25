@@ -10,7 +10,8 @@ API's designed in such a way that any frontend web or mobile applications can co
 
 Deployment has done using one of the most popular PaaS [Heroku using the container stack](https://hexdocs.pm/phoenix/heroku.html).
 
-> Note :  It might take up to 20 sec to get the API response first time, because Heroku unloads applications from the memory after some inactivity time. See [Dyno Sleeping](https://devcenter.heroku.com/articles/free-dyno-hours#dyno-sleeping).
+> Note :  It might take up to 20 sec to get the API response first time, because Heroku unloads applications from the memory after some inactivity time and In-memory state such as those in Agents, GenServers, and ETS will be lost every 24 hours means a started game if not completed within 24 hours will be vanished.
+See [Dyno Sleeping](https://devcenter.heroku.com/articles/free-dyno-hours#dyno-sleeping).
 
 ### App URL
 https://tictac9.herokuapp.com
