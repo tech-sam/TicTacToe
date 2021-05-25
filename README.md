@@ -146,14 +146,12 @@ We can’t name a process with a string; we need to use a [Registry](https://hex
 
 ### Further improvements & TODO:
 * Test cases for sure 😔
+* MiniMax Algorithm for a computer player
 * A frontend client in Angular,React or Vue
 * Pub Sub design for real time game state update using web sockets
 * Phoenix live view dashboard 
 * Further code optimization and moudularization
 * Detailed module and function documentation
-
-
-
 
 
 ## Resources followed for assignment and Elixir learning
@@ -167,3 +165,18 @@ We can’t name a process with a string; we need to use a [Registry](https://hex
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+
+### Add on
+
+> Bored of being bored because being bored is boring.
+
+Utilizing the App's modular design like  State, GameProcessor, GameUtils etc., a CLI module created allows you to play Tictactoe in the command line.
+
+* open terminal in app's root dir
+* type `iex -s mix`
+* import CLI module `import Tictactoe.Game.Cli`
+* just type `play`
+
+> Note : As this module is not using GenServer for state management any error will restart the game 
+
+![CLI module](https://contattafiles.s3.us-west-1.amazonaws.com/tnt35933/fFvIhXvMKY5Vr6H/tictactoe-1621955308465.gif "CLI Tictactoe")
