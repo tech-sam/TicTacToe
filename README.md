@@ -120,6 +120,8 @@ A valid move response will contain the response.
 > If a move encounter a winning or tie, an appropriate message would be displayed to encourage the players 🎉 
 
 
+![game move api](https://contattafiles.s3.us-west-1.amazonaws.com/tnt35933/j88dMKfpDTLYc6A/tictactoe-1621936789185.gif "Game move API")
+
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 
 ## Learn more
