@@ -137,6 +137,10 @@ To ensure an error occurred in a game would be handled appropriately and not pre
 `GameRegistry` : 
 We can’t name a process with a string; we need to use a [Registry](https://hexdocs.pm/elixir/master/Registry.html) to link string names to game PID's. Elixir’s GenServer implementation has a built-in way of referring to processes in a registry through it’s :via-tuples
 
+`State` : Managing and manipulating a perticular game state , exe :initial,:playing,:game_over etc , leveraging the power of [Elixir pattern maching](https://elixir-lang.org/getting-started/pattern-matching.html)
+
+`GameStore` : In memory Map to store a game state, can be easily replaced by a persistance data store like **postgres**
+
 ![App diagram](https://contattafiles.s3.us-west-1.amazonaws.com/tnt35933/y1rZc5KimgiBVvd/unchain-tictac.jpg "App architecture")
 
 
