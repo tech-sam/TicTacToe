@@ -4,7 +4,7 @@ defmodule TictactoeWeb.FallbackController do
   def call(conn, {:error, :invalid_player}) do
     conn
     |> put_status(500)
-    |> json(%{error: "Invalid player passed !!"})
+    |> json(%{error: "Invalid player passed must be X or O !!"})
   end
 
   def call(conn, {:error, :invalid_square}) do

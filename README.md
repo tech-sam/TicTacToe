@@ -1,9 +1,15 @@
+
+> "The simpler the food, the harder it is to prepare well" - Joël Robuchon.
+
 # Tictactoe
+
+In-memory state such as those in Agents, GenServers, and ETS will be lost every 24 hours.
+
+
 
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
   * Start Phoenix endpoint with `mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
