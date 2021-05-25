@@ -3,7 +3,7 @@
 
 # Tictactoe
 
-Welcome to the TicTacToe Game Processor, an Elixir Phoenix API that manages a TicTacToe game, allowing any type of client and providing a common interface for them to play a game.
+Welcome to the TicTacToe Game Processor, an Elixir Phoenix API that manages a TicTacToe game. The App allows any type of client and provides a common interface to play a game.
 
 ## Main Technology stack
 
@@ -12,9 +12,9 @@ Welcome to the TicTacToe Game Processor, an Elixir Phoenix API that manages a Ti
 
 ## Deployment
 
-Deployment has done using one of the most popular PaaS [Heroku using the container stack](https://hexdocs.pm/phoenix/heroku.html).
+Deployment has been done with one of the most popular PaaS [Heroku using the container stack](https://hexdocs.pm/phoenix/heroku.html).
 
-> Note :  It might take up to 20 sec to get the API response first time, because Heroku unloads applications from the memory after some inactivity time and In-memory state such as those in Agents, GenServers, and ETS will be lost every 24 hours means a started game if not completed within 24 hours will be vanished.
+> Note :  It might take up to 20 secs to get the API response first time, because Heroku unloads applications from the memory after some inactivity time and In-memory state such as those in Agents, GenServers, and ETS will be lost every 24 hours means a started game if not completed within 24 hours will be vanished.
 See [Dyno Sleeping](https://devcenter.heroku.com/articles/free-dyno-hours#dyno-sleeping).
 
 ### App URL
@@ -28,11 +28,11 @@ https://tictac9.herokuapp.com
   * Install dependencies with `mix deps.get`
   * Start Phoenix endpoint with `mix phx.server`
   * The game processor should be accessible now in `localhost:4000`.
-  * Currently test cases are broken due to ecto dependecies 😑 , `mix test` and  `mix acceptance` commands will not work
+  * Currently test cases are broken due to ecto dependecies 😑. `mix test` and  `mix acceptance` commands will not work
 
-#### To start application using Docker:
+#### To start the application using Docker:
 
-* Make sure Docker Deamon is up and running by verify with one of the commands `docker run hello-world` or `docker info`
+* Make sure Docker Deamon is up and running by verify either of the two commands: `docker run hello-world` or `docker info`
 * Navigate to the app root directory
 * build the image by running `docker build -t tictac .`  don't forget to add a dot 
 * `docker run -p 4000:4000 tictac`
@@ -46,7 +46,7 @@ Game Processor provides an endpoint to start a game. You need to do a POST reque
 ```
 http://localhost:4000/api/v1/game/create
 ```
-An example response will be in the form of unique gameId in UUID form:
+An example response will be in the form of a unique gameId in UUID form:
 ```
 {
   "game_id": "fdaee005-b595-4fc9-b30b-8a223da0ea57"
@@ -58,14 +58,14 @@ An example response will be in the form of unique gameId in UUID form:
 
 ### Performing a move.
 
-Game Processor provides a way to get a player to move.
+Game Processor provides a way to get the player to move.
 
 You need to do a POST operation to the following endpoint:
 
 ```
 http://localhost:4000/api/v1/game/move
 ```
-You need to provide the specific parameters to move API as below in the request body. 
+After this, you need to provide the specific parameters to move API as below in the request body. 
 
 ```
 {
@@ -117,40 +117,40 @@ A valid move response will contain the response.
 * The current game Id.
 * Next player turn.
 
-> If a move encounter a winning or tie, an appropriate message would be displayed to encourage the players 🎉 
+> If a move encounters a win or tie, an appropriate message would be displayed to encourage the players 🎉 
 
 
 ![game move api](https://contattafiles.s3.us-west-1.amazonaws.com/tnt35933/j88dMKfpDTLYc6A/tictactoe-1621936789185.gif "Game move API")
 
 ### Flow & Design
 
-To ensure an error occurred in a game would be handled appropriately and not prevent the rest of the running games, we wanted something fault-tolerant. 
+We need something fault-tolerant to ensure an error occurred in a game would be handled appropriately and not prevent the rest of the running games. 
 
- We wanted a tool that makes it easy to track the state of a game. By leveraging [Dynamic Supervisors](https://hexdocs.pm/elixir/1.12/DynamicSupervisor.html) and [GenServers](https://hexdocs.pm/elixir/GenServer.html), we can concurrently maintain lots, and lots of games, having an in-memory game state, gracefully handle any errors that might occur for a given game deployment and track each game process.
+ We need a tool that makes it easy to track the state of a game. By leveraging [Dynamic Supervisors](https://hexdocs.pm/elixir/1.12/DynamicSupervisor.html) and [GenServers](https://hexdocs.pm/elixir/GenServer.html), we can concurrently maintain lots and lots of games having an in-memory game state, gracefully handle any errors that might occur for a given game deployment and track each game process.
 
 ### App glossary
 
 `GameSupervisor` :  A DynamicSupervisor which starts with no children. Children GameProcessors are started on demand. GameSupervisor allows players to start games, and it also automatically restarts them when a game process crashes. 
 
-`GameProcessor` : Its a GenServer to keep each game’s state, With our GenServer callbacks in place, we can spawn a process that keeps a game’s state.
+`GameProcessor` : Its a GenServer to keep each game’s state. With our GenServer callbacks in place, we can spawn a process that maintains a game’s state.
 
 `GameRegistry` : 
 We can’t name a process with a string; we need to use a [Registry](https://hexdocs.pm/elixir/master/Registry.html) to link string names to game PID's. Elixir’s GenServer implementation has a built-in way of referring to processes in a registry through it’s :via-tuples
 
 `State` : Managing and manipulating a perticular game state , exe :initial,:playing,:game_over etc , leveraging the power of [Elixir pattern maching](https://elixir-lang.org/getting-started/pattern-matching.html)
 
-`GameStore` : In memory Map to store a game state, can be easily replaced by a persistance data store like **postgres**
+`GameStore` : In-memory Map to store a game state, can be easily replaced by a persistance data store like **postgres**
 
 ![App diagram](https://contattafiles.s3.us-west-1.amazonaws.com/tnt35933/y1rZc5KimgiBVvd/unchain-tictac.jpg "App architecture")
 
 
 ### Further improvements & TODO:
-* Test cases for sure 😔
+* More test cases for sure 😔
 * MiniMax Algorithm for a computer player
 * A frontend client in Angular,React or Vue
 * Pub Sub design for real time game state update using web sockets
 * Phoenix live view dashboard 
-* Further code optimization and moudularization
+* Further code optimization and modularization
 * Detailed module and function documentation
 
 
@@ -170,13 +170,13 @@ We can’t name a process with a string; we need to use a [Registry](https://hex
 
 > Bored of being bored because being bored is boring.
 
-Utilizing the App's modular design like  State, GameProcessor, GameUtils etc., a CLI module created allows you to play Tictactoe in the command line.
+Utilizing the App's modular design like  State, GameProcessor, GameUtils etc., a CLI module allows you to play Tictactoe in the command line.
 
 * open terminal in app's root dir
 * type `iex -s mix`
 * import CLI module `import Tictactoe.Game.Cli`
 * just type `play`
 
-> Note : As this module is not using GenServer for state management any error will restart the game 
+> Note : As this module does not use GenServer for state management, any error will restart the game.
 
 ![CLI module](https://contattafiles.s3.us-west-1.amazonaws.com/tnt35933/fFvIhXvMKY5Vr6H/tictactoe-1621955308465.gif "CLI Tictactoe")
