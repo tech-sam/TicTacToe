@@ -46,6 +46,15 @@ Game Processor provides an endpoint to start a game. You need to do a POST reque
 ```
 http://localhost:4000/api/v1/game/move
 ```
+An example response will be in the form of unique gameId in UUID form:
+```
+{
+  "game_id": "fdaee005-b595-4fc9-b30b-8a223da0ea57"
+}
+```
+
+![game create api](https://contattafiles.s3.us-west-1.amazonaws.com/tnt35933/7QLZBhBaWaVFkUd/tictactoe-1621931180727.gif "Game create API")
+
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 
